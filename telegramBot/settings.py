@@ -89,6 +89,10 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+# dj-database-url settings
+# Update database configuration with $DATABASE_URL.
+db_from_env = dj_database_url.config()
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation

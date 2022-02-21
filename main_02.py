@@ -1,8 +1,3 @@
-import django
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = '{telegramBot}.settings'
-django.setup()
-
 import logging
 from telegram import Update, Bot
 from telegram.update import Update

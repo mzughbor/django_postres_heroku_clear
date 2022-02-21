@@ -17,7 +17,7 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
-    time.sleep(1700)
+    # time.sleep(1700)
 
 
     # scriptpath = ""
@@ -27,6 +27,6 @@ def main():
     # Do the import
     # import main_02
 
-while True:
-    if __name__ == '__main__':
-        main()
+# while True:
+if __name__ == '__main__':
+    main()

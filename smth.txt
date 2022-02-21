@@ -1,0 +1,20 @@
+
+Generating public/private rsa key pair.
+Your identification has been saved in C:\Users\hp\.ssh\id_rsa
+Your public key has been saved in C:\Users\hp\.ssh\id_rsa.pub
+The key fingerprint is:
+SHA256:FIKca+vL5kpF1ff6z9knniMkEcEoxrs6tFcQsO+I+CE zug@DESKTOP-H98Q65O
+The key's randomart image is:
++---[RSA 3072]----+
+|   ..=o..o..     |
+|    +o=.o.+      |
+|    oo +.. o     |
+|   .o.o.  . .    |
+|   ....oS  o     |
+| . ooo. . o .    |
+|E +o.o..   +     |
+| + o* .     o.o+.|
+|  o+++       +*oo|
++----[SHA256]-----+
+Uploading C:\Users\hp\.ssh\id_rsa.pub SSH key... done
+

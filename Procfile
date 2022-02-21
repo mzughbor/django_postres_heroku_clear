@@ -1,1 +1,1 @@
-web: gunicorn djangoandpostgresql.wsgi
+web: gunicorn telegramBot.wsgi

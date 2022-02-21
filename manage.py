@@ -2,6 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import time
 
 
 def main():
@@ -16,14 +17,16 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+    time.sleep(60)
 
-    scriptpath = ""
+
+    # scriptpath = ""
     # Add the directory containing your module to the Python path (wants absolute paths)
-    sys.path.append(os.path.abspath(scriptpath))
+    # sys.path.append(os.path.abspath(scriptpath))
 
     # Do the import
-    import main_02
+    # import main_02
 
-
-if __name__ == '__main__':
-    main()
+while True:
+    if __name__ == '__main__':
+        main()

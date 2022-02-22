@@ -1,15 +1,21 @@
-import logging
-from telegram import Update, Bot
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "telegramBot.settings")
+
+import django
+django.setup()
+
+from telegram import Bot
 from telegram.update import Update
 from telegram.ext import Updater, CallbackContext, CommandHandler, MessageHandler, Filters, Dispatcher
 from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from telegram.replykeyboardremove import ReplyKeyboardRemove
-from telegram.parsemode import ParseMode
 
 # bot = Bot("API KEY")
 # print(bot.get_me())
-updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
-# updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
+#updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
+from mainbot.models import Post
+
+updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
 dispatcher: Dispatcher = updater.dispatcher
 
 
@@ -67,3 +73,4 @@ updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"كتاب"), echo))
 updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"كتب عشوائية"), randomBooks))
 
 updater.start_polling()
+

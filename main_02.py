@@ -12,10 +12,8 @@ from telegram.replykeyboardremove import ReplyKeyboardRemove
 
 # bot = Bot("API KEY")
 # print(bot.get_me())
-#updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
+updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
 from mainbot.models import Post
-
-updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
 dispatcher: Dispatcher = updater.dispatcher
 
 

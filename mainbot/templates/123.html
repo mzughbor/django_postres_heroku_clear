@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% extends "base.html" %}
+    {% block page_content %}
+
+    <meta charset="UTF-8">
+    <title>123</title>
+</head>
+<body>
+
+<h2>LLLol</h2>
+
+    {% for book in all %}
+    <br>
+    <li> اسم الكتاب : {{ book.name }}</li>
+    <li> وصف الكتاب : {{ book.description }}</li>
+    <li> تصنيف الكتاب : {{ book.field }}</li>
+    <li>{{ book.language }} اللغة </li>
+    <li>عدد الصفحات {{ book.pages }}</li>
+    <li> رابط تحميل الكتاب <a href="{{ book.download_link }}"> {{ book.name }} </a></li>
+    <li>{{ book.author }}:  اسم المؤلف : Author name :</li>
+    <li>{{ book.image }} الصورة </li>
+    <br><br>
+    {% endfor %}
+
+    {% endblock %}
+
+</body>
+</html>

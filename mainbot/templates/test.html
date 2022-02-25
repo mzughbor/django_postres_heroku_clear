@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% extends "base.html" %}
+    {% block page_content %}
+    <meta charset="UTF-8">
+    <title>Future  messages  المجدولة</title>
+</head>
+<body>
+    <h1>All Future Messages - Telegram Bot</h1>
+    {% for message in messages_list %}
+    <li>{{ message.title }}</li>
+    <li>{{ message.body }}</li>
+    <li>{{ message.created_on }}</li>
+    <li>{{ message.last_modified }}</li>
+    <li>{{ message.categories }}</li>
+    <br><br>
+    {% endfor %}
+
+    {% endblock %}
+</body>
+</html>

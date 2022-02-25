@@ -18,3 +18,5 @@ tornado==6.1
 tzdata==2021.5
 tzlocal==4.1
 whitenoise==6.0.0
+Pillow==9.0.1
+

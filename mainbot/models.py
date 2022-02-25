@@ -1,3 +1,5 @@
+import datetime
+import os
 from django.db import models
 
 # Create your models here.
@@ -34,3 +36,42 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.author + '  .. علق ب .. :  ' + self.body
+
+
+def filepath(request, filename):
+    old_filename = filename
+    time_now = datetime.datetime.now().strftime('%Y%m%d%H:%M%S')
+    filename = "%s%s" % (time_now, old_filename)
+    return os.path.join('media/', filename)
+
+
+class Books(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True)
+    field = models.CharField(max_length=50)
+    language_list = (
+        ('ar', 'Arabic'),
+        ('eng', 'English'),
+        ('epo', 'Spanish'),
+        ('fre', 'French'),
+        ('tur', 'Turkish'),
+        ('dut', 'Dutch'),
+        ('chi', 'Chinese'),
+        ('por', 'Portuguese'),
+        ('ga', 'Irish'),
+        ('he', 'Hebrew'),
+        ('ind', 'Indonesian'),
+        ('fil', 'Filipino'),
+        ('jpn', 'Japanese'),
+        ('rus', 'Russian'),
+        ('hi', 'Hindi'),
+    )
+    language = models.CharField(max_length=20, choices=language_list)
+    pages = models.IntegerField(blank=True)
+    author = models.CharField(max_length=35)
+    download_link = models.TextField(null=False)
+    image = models.ImageField(upload_to=filepath, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+

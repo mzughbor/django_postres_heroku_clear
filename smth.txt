@@ -18,14 +18,3 @@ The key's randomart image is:
 +----[SHA256]-----+
 Uploading C:\Users\hp\.ssh\id_rsa.pub SSH key... done
 
-
-
-        query.edit_message_text("«·„ƒ·›  '%s'" % views.Books.objects.filter(name__contains=word_entered)[format(query.data)].author)
-    try:
-        query.edit_message_text("«·Ê’›  '%s'" % views.Books.objects.filter(name__contains=word_entered)[format(query.data)].description)
-    except:
-        print("Oops!", sys.exc_info()[0], "occurred.")
-    query.edit_message_text(" ’‰Ì› «·ﬂ «» ... '%s'" % views.Books.objects.filter(name__contains=word_entered)[format(query.data)].field)
-    query.edit_message_text("«··€… ... '%s'" % views.Books.objects.filter(name__contains=word_entered)[format(query.data)].language)
-    query.edit_message_text("⁄œœ «·’›Õ«  '%s'" % views.Books.objects.filter(name__contains=word_entered)[format(query.data)].pages)
-    query.edit_message_text("—«»ÿ «· Õ„Ì· '%s'" % views.Books.objects.filter(name__contains=word_entered)[format(query.data)].download_link)

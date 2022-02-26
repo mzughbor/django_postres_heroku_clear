@@ -15,8 +15,9 @@ from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.bot import Bot
 
-global number_counter
-global word_entered
+number_counter = 0
+word_entered = ''
+i = 0
 
 # updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
 updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
@@ -57,6 +58,10 @@ def name_book(update: Update, context: CallbackContext):
     """
     function to know what the hell user of the bot searching for  name of book to read ?.
     """
+    global i
+    global word_entered
+    global number_counter
+
     if update.message.text == '/name':
         update.message.reply_text("من فضلك أدخل /name أولا ثم الاسم لكي أستطيع مساعدتك !!")
         time.sleep(2)
@@ -65,8 +70,7 @@ def name_book(update: Update, context: CallbackContext):
         sliced = a_string[5:]
         # print([e.name for e in Books.objects.all()])
         after_tra = str(sliced.strip())
-        global word_entered
-        word_entered = after_tra
+        # word_entered = after_tra
         also = [e.name for e in Books.objects.filter(name__contains=after_tra)]  # here where the query happens...
         if len(also) == 0:
             update.message.reply_text("نأسف لا يوجد نتائج بحث مطابقة لدينا, حاول بكتاب اخر...")
@@ -79,14 +83,16 @@ def name_book(update: Update, context: CallbackContext):
                 update.message.reply_text("نتيجه البحث هي :'%s' " % x)
                 keyboard[0].append(InlineKeyboardButton(x, callback_data=counter))
 
+            print(i, "i'm the i ")
             if len(also) >= 2:
                 reply_markup = InlineKeyboardMarkup(keyboard)
                 update.message.reply_text('Please choose:', reply_markup=reply_markup)
+                word_entered = after_tra
 
             if len(also) == 1:
-                global number_counter
                 number_counter = len(also)
-                #update.message.reply_text.update_user("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[0])
+                # update.message.reply_text.("اسم الكتاب : ... '%s'" % views.Books.objects.filter(
+                # name__contains=after_tra)[0])
                 update.message.reply_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].author)
                 try:
                     update.message.reply_text("الوصف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].description)
@@ -107,22 +113,33 @@ def button(update, context):
     """
     callback method handling button press
     """
-    query: CallbackQuery = update.callback_query
-    query.answer()
-    query.edit_message_text(text="لقد اخترت خيار : {}".format(query.data))
     global i
+    global word_entered
+    query: CallbackQuery = update.callback_query
+    query2: CallbackQuery = update.callback_query
+    query.answer()
     i = int(format(query.data))
+    query.edit_message_text(text="لقد اخترت خيار : {}".format(query.data))
+    query2.edit_message_text(chooses(Update, CallbackQuery))
+    # views.Books.objects.filter(name__contains=word_entered)[i].description,
+    # views.Books.objects.filter(name__contains=word_entered)[i].author)
+    # update.callback_query.message.edit_text(str(views.Books.objects.filter(name__contains=word_entered)[i].description))
+    # update.callback_query.message.edit_text(str(views.Books.objects.filter(name__contains=word_entered)[i].description))
+    # query.edit_message_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=word_entered)[i-1].author)
     # also = [e.name for e in Books.objects.filter(name__contains=word_entered)]  # here where the query happens...
 
 
-def multapil_cho(update: Update, context: CallbackContext):
-    after_tra = 'رواية'
+def chooses(update: Update, context: CallbackQuery):
     global i
     global word_entered
-    word_entered = after_tra
-    also = [e.name for e in Books.objects.filter(name__contains=after_tra)]  # here where the query happens...
-    update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=word_entered)[i])
-    pass
+    return "لقد اخترت خيار رقم : {} \n ".format(i) +\
+        "اسم الكتاب : ... '% s' \n " % views.Books.objects.filter(name__contains=word_entered)[i-1] +\
+        "المؤلف  '%s' \n " % views.Books.objects.filter(name__contains=word_entered)[i-1].author +\
+        "الوصف  '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i-1].description +\
+        " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i-1].field +\
+        "اللغة ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i-1].language +\
+        "عدد الصفحات '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i-1].pages +\
+        "رابط التحميل '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].download_link
 
 
 def randomBooks(update: Update, context: CallbackContext):

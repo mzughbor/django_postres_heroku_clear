@@ -19,8 +19,8 @@ number_counter = 0
 word_entered = ''
 i = 0
 
-#updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
-updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
+updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
+#updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
 from mainbot.models import Post, Books
 dispatcher: Dispatcher = updater.dispatcher
 
@@ -152,7 +152,7 @@ def chooses(update: Update, context: CallbackQuery):
         views.Books.objects.filter(name__contains=word_entered)[i - 1].description
     except:
         print("Oops!", sys.exc_info()[0], "occurred.")
-    finally:
+    else:
         if sys.exc_info()[0] is None:
             return "لقد اخترت خيار رقم : {} \n ".format(i) + \
                    "اسم الكتاب : ... '% s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1] + \

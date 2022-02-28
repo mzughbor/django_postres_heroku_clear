@@ -19,8 +19,8 @@ number_counter = 0
 word_entered = ''
 i = 0
 
-updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
-#updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
+#updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
+updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
 from mainbot.models import Post, Books
 dispatcher: Dispatcher = updater.dispatcher
 
@@ -49,10 +49,17 @@ def remove(update: Update, context: CallbackContext):
 
 
 def echo(update: Update, context: CallbackContext):
-    if str(update.message.text) == "إبحث عن كتاب":
-        update.message.reply_text(
-            "من فضلك اكتب الامر'/name' ثم قم بادخال اسم الكتاب الذي تريده او اسماً مشابها لما تتذكر.. ")
-    pass
+    #if str(update.message.text) == "إبحث عن كتاب":
+    #    update.message.reply_text(
+    #        "من فضلك اكتب الامر'/name' ثم قم بادخال اسم الكتاب الذي تريده او اسماً مشابها لما تتذكر.. ")
+    #pass
+    # update.message.reply_text(" فضلك أدخل /name أولا ثم الاسم لكي أستطيع مساعدتك !!")
+    keyboard_name = [[
+        InlineKeyboardButton('إنقرهنا ثم أخبرني الاسم لكي أستطيع مساعدتك', switch_inline_query_current_chat='/name ')
+    ]]
+    reply_markup = InlineKeyboardMarkup(keyboard_name)
+    update.message.reply_text("من فضلك قم بادخال اسم الكتاب بعد النقر على الزر أدناه", reply_markup=reply_markup)
+    time.sleep(2)
 
 
 def name_book(update: Update, context: CallbackContext):
@@ -62,64 +69,55 @@ def name_book(update: Update, context: CallbackContext):
     global i
     global word_entered
     global number_counter
-
-    if update.message.text == '/name':
-        # update.message.reply_text(" فضلك أدخل /name أولا ثم الاسم لكي أستطيع مساعدتك !!")
-        keyboard_name = [[
-            InlineKeyboardButton('إنقرهنا ثم أخبرني الاسم لكي أستطيع مساعدتك', switch_inline_query_current_chat ='/name ')
-        ]]
-        reply_markup = InlineKeyboardMarkup(keyboard_name)
-        update.message.reply_text("من فضلك قم بادخال اسم الكتاب بعد النقر على الزر أدناه", reply_markup=reply_markup)
-
-        time.sleep(2)
+    #print(update.message.text)
+    #if update.message.text == '@mzughbot /name ':
+    a_string = str(update.message.text)
+    sliced = a_string[15:]
+    # print([e.name for e in Books.objects.all()])
+    after_tra = str(sliced.strip())
+    # word_entered = after_tra
+    also = [e.name for e in Books.objects.filter(name__contains=after_tra)]  # here where the query happens...
+    if len(also) == 0:
+        update.message.reply_text("نأسف لا يوجد نتائج بحث مطابقة لدينا, حاول بكتاب اخر...")
+        update.message.reply_text("لقد أردت البحث عن ... '%s' " % also)
     else:
-        a_string = str(update.message.text)
-        sliced = a_string[5:]
-        # print([e.name for e in Books.objects.all()])
-        after_tra = str(sliced.strip())
-        # word_entered = after_tra
-        also = [e.name for e in Books.objects.filter(name__contains=after_tra)]  # here where the query happens...
-        if len(also) == 0:
-            update.message.reply_text("نأسف لا يوجد نتائج بحث مطابقة لدينا, حاول بكتاب اخر...")
-            update.message.reply_text("لقد أردت البحث عن ... '%s' " % also)
-        else:
-            keyboard = [[]]
-            counter = 0
-            for x in also:
-                counter += 1
-                update.message.reply_text("نتيجه البحث هي :'%s' " % x)
-                keyboard[0].append(InlineKeyboardButton(x, callback_data=counter, switch_inline_query='/name'))
+        keyboard = [[]]
+        counter = 0
+        for x in also:
+            counter += 1
+            update.message.reply_text("نتيجه البحث هي :'%s' " % x)
+            keyboard[0].append(InlineKeyboardButton(x, callback_data=counter, switch_inline_query='/name'))
 
-            print(i, "i'm the i ")
-            if len(also) >= 2:
-                reply_markup = InlineKeyboardMarkup(keyboard)
-                update.message.reply_text('Please choose:',reply_markup=reply_markup)
-                word_entered = after_tra
+        print(i, "i'm the i ")
+        if len(also) >= 2:
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            update.message.reply_text('Please choose:',reply_markup=reply_markup)
+            word_entered = after_tra
 
-            if len(also) == 1:
-                number_counter = len(also)
-                # update.message.reply_text.("اسم الكتاب : ... '%s'" % views.Books.objects.filter(
-                # name__contains=after_tra)[0])
+        if len(also) == 1:
+            number_counter = len(also)
+            # update.message.reply_text.("اسم الكتاب : ... '%s'" % views.Books.objects.filter(
+            # name__contains=after_tra)[0])
+            update.message.reply_text(
+                "المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].author)
+            try:
                 update.message.reply_text(
-                    "المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].author)
-                try:
-                    update.message.reply_text(
-                        "الوصف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].description)
-                except:
-                    print("Oops!", sys.exc_info()[0], "occurred.")
+                    "الوصف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].description)
+            except:
+                print("Oops!", sys.exc_info()[0], "occurred.")
 
-                update.message.reply_text(
-                    "تصنيف الكتاب ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].field)
-                update.message.reply_text(
-                    "اللغة ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].language)
-                update.message.reply_text(
-                    "عدد الصفحات '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].pages)
-                update.message.reply_text(
-                    "رابط التحميل '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].download_link)
+            update.message.reply_text(
+                "تصنيف الكتاب ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].field)
+            update.message.reply_text(
+                "اللغة ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].language)
+            update.message.reply_text(
+                "عدد الصفحات '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].pages)
+            update.message.reply_text(
+                "رابط التحميل '%s'" % views.Books.objects.filter(name__contains=after_tra)[0].download_link)
 
-                # if not [e.name for e in Books.objects.filter(name__contains=sliced)]:
-                # print(views.Books.objects.order_by('name')) # description
-                # update.message.reply_text("You just clicked on '%s'" % views.Books.objects.filter(name__startswith='رواية'))
+            # if not [e.name for e in Books.objects.filter(name__contains=sliced)]:
+            # print(views.Books.objects.order_by('name')) # description
+            # update.message.reply_text("You just clicked on '%s'" % views.Books.objects.filter(name__startswith='رواية'))
 
 
 def button(update, context):
@@ -239,8 +237,9 @@ def error(update: Update, context: CallbackContext):
 dispatcher.add_handler(CommandHandler("start", start))
 updater.dispatcher.add_handler(CommandHandler("start", start))
 updater.dispatcher.add_handler(CommandHandler("remove", remove))
-updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"إبحث عن كتاب"), echo))
-updater.dispatcher.add_handler(CommandHandler("name", name_book))
+updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"إبحث عن كتاب"), echo)) # echo
+updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"@mzughbot /name"), name_book))
+# updater.dispatcher.add_handler(CommandHandler("name", name_book))
 # updater.dispatcher.add_handler(CommandHandler("y", multapil_cho))
 updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"كتب عشوائية"), randomBooks))
 updater.dispatcher.add_error_handler(error)  # error handling

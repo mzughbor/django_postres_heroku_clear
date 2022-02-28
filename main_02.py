@@ -156,7 +156,7 @@ def chooses(update: Update, context: CallbackQuery):
                    "اسم الكتاب : ... '% s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1] + \
                    "المؤلف  '%s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].author + \
                    "الوصف  '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].description + \
-                   " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].field + \
+                   " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].field +\
                    "اللغة ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].language + \
                    "عدد الصفحات '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].pages + \
                    "رابط التحميل '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].download_link
@@ -164,7 +164,7 @@ def chooses(update: Update, context: CallbackQuery):
             return "لقد اخترت خيار رقم : {} \n ".format(i) + \
                    "اسم الكتاب : ... '% s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1] + \
                    "المؤلف  '%s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].author + \
-                   " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].field + \
+                   " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].field +\
                    "اللغة ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].language + \
                    "عدد الصفحات '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].pages + \
                    "رابط التحميل '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].download_link
@@ -175,7 +175,7 @@ def randomBooks(update: Update, context: CallbackContext):
     char_list = ['أ', 'ب', 'ت', 'ث', 'ح', 'ج', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف',
                  'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي']
     after_tra = str(random.choice(char_list))
-    print(after_tra)
+    # print(after_tra)
     also = [e.name for e in Books.objects.filter(name__contains=after_tra)]  # here where the query happens...
     while len(also) == 0:
         # if len(also) == 0:
@@ -224,6 +224,29 @@ def randomBooks(update: Update, context: CallbackContext):
         # endif
     elif str(update.message.text) == "ملخصات كتب عشوائية":
         update.message.reply_text("الان سأظهر لك ملخص لكتاب واحد بشكل عشوائي من المكتبة, استمتع بقرائته ... ")
+        if len(also) == 1:
+            i = 1
+            update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1])
+            update.message.reply_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
+            try:
+                update.message.reply_text(
+                    "الملخص :  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].summaries)
+            except:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+            update.message.reply_text(
+                "عدد صفحات الكتاب '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].pages)
+        else:
+            i = random.choice(range(1, len(also)))
+            # print("this  my i:", i)
+            update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1])
+            update.message.reply_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
+            try:
+                update.message.reply_text(
+                    "الملخص :  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].summaries)
+            except:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+            update.message.reply_text(
+                "عدد صفحات الكتاب '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].pages)
     else:
         pass
 

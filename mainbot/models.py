@@ -71,7 +71,8 @@ class Books(models.Model):
     author = models.CharField(max_length=35)
     download_link = models.TextField(null=False)
     image = models.ImageField(upload_to=filepath, null=True, blank=True)
-    # add field for summeries / ملخصات كتب عشؤاية
+    # add field for summaries / ملخصات كتب عشؤاية
+    summaries = models.TextField(null=True)
 
     def __str__(self):
         return self.name

@@ -3,10 +3,9 @@ import sys
 import time
 import random
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "telegramBot.settings")
 import django
-
+import telegram
 django.setup()
 from mainbot import views
 from telegram.update import Update
@@ -20,18 +19,18 @@ number_counter = 0
 word_entered = ''
 i = 0
 
-# updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
+#updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
 updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
 from mainbot.models import Post, Books
-
 dispatcher: Dispatcher = updater.dispatcher
 
 
-def start(update: Update, context: CallbackContext):
+def start(update: Update, context: CallbackContext, chatId=None):
     """
     the callback for handling start command and create keyboard
     """
     bot: Bot = context.bot
+    # bot.telegram.sendMessage(user_id, 'please click below button and give it a number: 1 to 365', )
 
     kbd_layout = [['إقتباسات عشوائية', 'كتب عشوائية'], ['شعر', 'ملخصات كتب عشوائية'],
                   ["إبحث عن كتاب"]]
@@ -65,7 +64,13 @@ def name_book(update: Update, context: CallbackContext):
     global number_counter
 
     if update.message.text == '/name':
-        update.message.reply_text("من فضلك أدخل /name أولا ثم الاسم لكي أستطيع مساعدتك !!")
+        # update.message.reply_text(" فضلك أدخل /name أولا ثم الاسم لكي أستطيع مساعدتك !!")
+        keyboard_name = [[
+            InlineKeyboardButton('إنقرهنا ثم أخبرني الاسم لكي أستطيع مساعدتك', switch_inline_query_current_chat ='/name ')
+        ]]
+        reply_markup = InlineKeyboardMarkup(keyboard_name)
+        update.message.reply_text("من فضلك قم بادخال اسم الكتاب بعد النقر على الزر أدناه", reply_markup=reply_markup)
+
         time.sleep(2)
     else:
         a_string = str(update.message.text)
@@ -83,12 +88,12 @@ def name_book(update: Update, context: CallbackContext):
             for x in also:
                 counter += 1
                 update.message.reply_text("نتيجه البحث هي :'%s' " % x)
-                keyboard[0].append(InlineKeyboardButton(x, callback_data=counter))
+                keyboard[0].append(InlineKeyboardButton(x, callback_data=counter, switch_inline_query='/name'))
 
             print(i, "i'm the i ")
             if len(also) >= 2:
                 reply_markup = InlineKeyboardMarkup(keyboard)
-                update.message.reply_text('Please choose:', reply_markup=reply_markup)
+                update.message.reply_text('Please choose:',reply_markup=reply_markup)
                 word_entered = after_tra
 
             if len(also) == 1:
@@ -129,6 +134,7 @@ def button(update, context):
     i = int(format(query.data))
     query.edit_message_text(text="لقد اخترت خيار : {}".format(query.data))
     query2.edit_message_text(chooses(Update, CallbackQuery))
+
     # views.Books.objects.filter(name__contains=word_entered)[i].description,
     # views.Books.objects.filter(name__contains=word_entered)[i].author)
     # update.callback_query.message.edit_text(str(views.Books.objects.filter(name__contains=word_entered)[i].description))
@@ -140,20 +146,34 @@ def button(update, context):
 def chooses(update: Update, context: CallbackQuery):
     global i
     global word_entered
-    return "لقد اخترت خيار رقم : {} \n ".format(i) + \
-           "اسم الكتاب : ... '% s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1] + \
-           "المؤلف  '%s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].author + \
-           "الوصف  '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].description + \
-           " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].field + \
-           "اللغة ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].language + \
-           "عدد الصفحات '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].pages + \
-           "رابط التحميل '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].download_link
+    trigger = 1
+    print('god damn ',sys.exc_info()[0])
+    try:
+        views.Books.objects.filter(name__contains=word_entered)[i - 1].description
+    except:
+        print("Oops!", sys.exc_info()[0], "occurred.")
+    finally:
+        if sys.exc_info()[0] is None:
+            return "لقد اخترت خيار رقم : {} \n ".format(i) + \
+                   "اسم الكتاب : ... '% s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1] + \
+                   "المؤلف  '%s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].author + \
+                   "الوصف  '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].description + \
+                   " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].field + \
+                   "اللغة ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].language + \
+                   "عدد الصفحات '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].pages + \
+                   "رابط التحميل '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].download_link
+        else:
+            return "لقد اخترت خيار رقم : {} \n ".format(i) + \
+                   "اسم الكتاب : ... '% s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1] + \
+                   "المؤلف  '%s' \n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].author + \
+                   " تصنيف الكتاب ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].field + \
+                   "اللغة ... '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].language + \
+                   "عدد الصفحات '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].pages + \
+                   "رابط التحميل '%s'\n " % views.Books.objects.filter(name__contains=word_entered)[i - 1].download_link
 
 
-def summeries(update: Update, context: CallbackContext):
-    """
-    function to get random book to read ? . // First option >>
-    """
+def randomBooks(update: Update, context: CallbackContext):
+    update.message.reply_text("لقد ضغطت على زر  '%s' من فضلك انتظر قليلاً ... " % update.message.text)
     char_list = ['أ', 'ب', 'ت', 'ث', 'ح', 'ج', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف',
                  'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي']
     after_tra = str(random.choice(char_list))
@@ -164,66 +184,11 @@ def summeries(update: Update, context: CallbackContext):
         after_tra = str(random.choice(char_list))
         also = [e.name for e in Books.objects.filter(name__contains=after_tra)]
     print(len(also))
-    if len(also) == 1:
-        i = 1
-        update.message.text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i-1])
-
-        print("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
-        try:
-            print(
-                "الوصف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].description)
-        except:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-
-        print(
-            "تصنيف الكتاب ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].field)
-        print(
-            "اللغة ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].language)
-        print(
-            "عدد الصفحات '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].pages)
-        print(
-            "رابط التحميل '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].download_link)
-    else:
-        i = random.choice(range(1, len(also)))
-        print("this  my i:", i)
-        update.message.text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i-1])
-
-        print("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
-        try:
-            print(
-                "الوصف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].description)
-        except:
-            print("Oops!", sys.exc_info()[0], "occurred.")
-
-        print(
-            "تصنيف الكتاب ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].field)
-        print(
-            "اللغة ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].language)
-        print(
-            "عدد الصفحات '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].pages)
-        print(
-            "رابط التحميل '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].download_link)
-
-
-def randomBooks(update: Update, context: CallbackContext):
-    update.message.reply_text("لقد ضغطت على زر  '%s'" % update.message.text)
     if str(update.message.text) == "كتب عشوائية":
-        update.message.reply_text(
-            "الان سأظهر لك كتاب واحد بشكل عشوائي من المكتبة, استمتع بالقراءة ... ")
-        char_list = ['أ', 'ب', 'ت', 'ث', 'ح', 'ج', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف',
-                     'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي']
-        after_tra = str(random.choice(char_list))
-        print(after_tra)
-        also = [e.name for e in Books.objects.filter(name__contains=after_tra)]  # here where the query happens...
-        while len(also) == 0:
-            # if len(also) == 0:
-            after_tra = str(random.choice(char_list))
-            also = [e.name for e in Books.objects.filter(name__contains=after_tra)]
-        print(len(also))
+        update.message.reply_text("الان سأظهر لك كتاب واحد بشكل عشوائي من المكتبة, استمتع بالقراءة ... ")
         if len(also) == 1:
             i = 1
             update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1])
-
             update.message.reply_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
             try:
                 update.message.reply_text(
@@ -241,9 +206,8 @@ def randomBooks(update: Update, context: CallbackContext):
                 "رابط التحميل '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].download_link)
         else:
             i = random.choice(range(1, len(also)))
-            print("this  my i:", i)
+            # print("this  my i:", i)
             update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1])
-
             update.message.reply_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
             try:
                 update.message.reply_text(
@@ -259,10 +223,9 @@ def randomBooks(update: Update, context: CallbackContext):
                 "عدد الصفحات '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].pages)
             update.message.reply_text(
                 "رابط التحميل '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].download_link)
-
+        # endif
     elif str(update.message.text) == "ملخصات كتب عشوائية":
-        update.message.reply_text(
-            "الان سأظهر لك ملخص لكتاب واحد بشكل عشوائي من المكتبة, استمتع بالقرائته ... ")
+        update.message.reply_text("الان سأظهر لك ملخص لكتاب واحد بشكل عشوائي من المكتبة, استمتع بقرائته ... ")
     else:
         pass
 

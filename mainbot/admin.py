@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from mainbot.models import Post, Category, Books
+from mainbot.models import Post, Category, Books, Poetry, Quotes
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -19,3 +19,5 @@ class BooksAdmin(admin.ModelAdmin):
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Books, BooksAdmin)
+admin.site.register(Quotes)
+admin.site.register(Poetry)

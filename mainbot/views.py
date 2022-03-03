@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Comment, Post, Books
+from .models import Comment, Post, Books, Quotes, Poetry
 from .forms import CommentForm
 
 messages_list_mz = Post.objects.all()

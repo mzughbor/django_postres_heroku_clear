@@ -2,7 +2,11 @@ import os
 import sys
 import time
 import random
+
+import telepot
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from telepot.loop import MessageLoop
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "telegramBot.settings")
 import django
 import telegram
@@ -15,14 +19,18 @@ from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.bot import Bot
 
+
 number_counter = 0
 word_entered = ''
 i = 0
 
-#updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
-updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
-from mainbot.models import Post, Books
+updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
+# updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
+from mainbot.models import Post, Books, Poetry, Quotes
 dispatcher: Dispatcher = updater.dispatcher
+
+
+bot = telepot.Bot('5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus')
 
 
 def start(update: Update, context: CallbackContext, chatId=None):
@@ -32,7 +40,7 @@ def start(update: Update, context: CallbackContext, chatId=None):
     bot: Bot = context.bot
     # bot.telegram.sendMessage(user_id, 'please click below button and give it a number: 1 to 365', )
 
-    kbd_layout = [['إقتباسات عشوائية', 'كتب عشوائية'], ['شعر', 'ملخصات كتب عشوائية'],
+    kbd_layout = [['إقتباسات عشوائية', 'غذاء معرفي'], ['شعر', 'ملخصات كتب عشوائية'],
                   ["إبحث عن كتاب"]]
     # حكم وأمثال لاغي
     kbd = ReplyKeyboardMarkup(kbd_layout)
@@ -49,11 +57,6 @@ def remove(update: Update, context: CallbackContext):
 
 
 def echo(update: Update, context: CallbackContext):
-    #if str(update.message.text) == "إبحث عن كتاب":
-    #    update.message.reply_text(
-    #        "من فضلك اكتب الامر'/name' ثم قم بادخال اسم الكتاب الذي تريده او اسماً مشابها لما تتذكر.. ")
-    #pass
-    # update.message.reply_text(" فضلك أدخل /name أولا ثم الاسم لكي أستطيع مساعدتك !!")
     keyboard_name = [[
         InlineKeyboardButton('إنقرهنا ثم أخبرني الاسم لكي أستطيع مساعدتك', switch_inline_query_current_chat='/name ')
     ]]
@@ -69,10 +72,10 @@ def name_book(update: Update, context: CallbackContext):
     global i
     global word_entered
     global number_counter
-    #print(update.message.text)
-    #if update.message.text == '@mzughbot /name ':
+    # print(update.message.text)
+    # if update.message.text == '@mzughbot /name ':
     a_string = str(update.message.text)
-    sliced = a_string[15:]
+    sliced = a_string[21:] # 15
     # print([e.name for e in Books.objects.all()])
     after_tra = str(sliced.strip())
     # word_entered = after_tra
@@ -91,7 +94,7 @@ def name_book(update: Update, context: CallbackContext):
         print(i, "i'm the i ")
         if len(also) >= 2:
             reply_markup = InlineKeyboardMarkup(keyboard)
-            update.message.reply_text('Please choose:',reply_markup=reply_markup)
+            update.message.reply_text('Please choose:', reply_markup=reply_markup)
             word_entered = after_tra
 
         if len(also) == 1:
@@ -182,8 +185,8 @@ def randomBooks(update: Update, context: CallbackContext):
         after_tra = str(random.choice(char_list))
         also = [e.name for e in Books.objects.filter(name__contains=after_tra)]
     print(len(also))
-    if str(update.message.text) == "كتب عشوائية":
-        update.message.reply_text("الان سأظهر لك كتاب واحد بشكل عشوائي من المكتبة, استمتع بالقراءة ... ")
+    if str(update.message.text) == "غذاء معرفي":
+        update.message.reply_text("الان سأظهر لك كتاب واحد من المكتبة, استمتع بالقراءة ... ")
         if len(also) == 1:
             i = 1
             update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1])
@@ -235,8 +238,33 @@ def randomBooks(update: Update, context: CallbackContext):
                 print("Oops!", sys.exc_info()[0], "occurred.")
             update.message.reply_text(
                 "عدد صفحات الكتاب '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].pages)
+            # let the human know that the pdf is on its way
+            bot.sendMessage(update.message.chat.id, "preparing pdf of fresh news, pls wait..")
+            # file="rgs_plan_ar_semester_2.pdf"
+            # file = "mainbot/Capture.png"
+            # media\media
+            file = views.Books.objects.filter()[0].image
+            file = "media/" + str(file)
+            update.message.reply_text("image '%s'" % file)
+            # send the pdf doc
+            bot.sendDocument(chat_id=update.message.chat.id, document=open(file, 'rb'))
+            # bot.sendMessage(chat_id, "sorry, I can only deliver news")
+
         else:
             i = random.choice(range(1, len(also)))
+
+            # let the human know that the pdf is on its way
+            bot.sendMessage(update.message.chat.id, "preparing pdf of fresh news, pls wait..")
+            # file="rgs_plan_ar_semester_2.pdf"
+            # file = "mainbot/Capture.png"
+            # media\media
+            file = views.Books.objects.filter()[0].image
+            file = "media\\" + str(file)
+            update.message.reply_text("image '%s'" % file)
+            # send the pdf doc
+            bot.sendDocument(chat_id=update.message.chat.id, document=open(file, 'rb'))
+            # bot.sendMessage(chat_id, "sorry, I can only deliver news")
+
             # print("this  my i:", i)
             update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1])
             update.message.reply_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
@@ -251,20 +279,109 @@ def randomBooks(update: Update, context: CallbackContext):
         pass
 
 
+def porty(update: Update, context: CallbackContext):
+    """
+    This is not the best way to do it >> you have to flip it to .id
+    or you've take care of name ?? or decsripsion or what the quiry ?
+    """
+    char_list = ['أ', 'ب', 'ت', 'ث', 'ح', 'ج', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف',
+                 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي']
+    after_tra = str(random.choice(char_list))
+    also = [e.name for e in Poetry.objects.filter(name__contains=after_tra)]  # here where the query happens...
+    while len(also) == 0:
+        after_tra = str(random.choice(char_list))
+        also = [e.name for e in Poetry.objects.filter(name__contains=after_tra)]
+    print(len(also))
+
+    if str(update.message.text) == "شعر":
+        update.message.reply_text("سأقوم بعرض بعض من أبيات الشعر من المكتبة بشكل عشوائي : ")
+        if len(also) == 1:
+            i = 1
+            update.message.reply_text("العنوان  '%s'" % views.Poetry.objects.filter(name__contains=after_tra)[i - 1].name)
+            try:
+                update.message.reply_text(
+                    "--  '%s'" % views.Poetry.objects.filter(name__contains=after_tra)[i - 1].description)
+            except:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+        else:
+            i = random.choice(range(1, len(also)))
+            update.message.reply_text("العنوان  '%s'" % views.Poetry.objects.filter(name__contains=after_tra)[i - 1].name)
+            try:
+                update.message.reply_text(
+                    "--  '%s'" % views.Poetry.objects.filter(name__contains=after_tra)[i - 1].description)
+            except:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+        # endif
+        # update.message.reply_text(" فضلك أدخل /name أولا ثم الاسم لكي أستطيع مساعدتك !!")
+
+
+def quotes(update: Update, context: CallbackContext):
+    char_list = ['أ', 'ب', 'ت', 'ث', 'ح', 'ج', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف',
+                 'ق', 'ك', 'ل', 'م', 'ن', 'ه', 'و', 'ي']
+    after_tra = str(random.choice(char_list))
+    also = [e.name for e in Quotes.objects.filter(name__contains=after_tra)]  # here where the query happens...
+    while len(also) == 0:
+        after_tra = str(random.choice(char_list))
+        also = [e.name for e in Quotes.objects.filter(name__contains=after_tra)]
+    print(len(also))
+
+    if str(update.message.text) == "إقتباسات عشوائية":
+        update.message.reply_text("سأقوم بعرض بعض من إقتباسات من المكتبة بشكل عشوائي : ")
+        if len(also) == 1:
+            i = 1
+            update.message.reply_text("العنوان  '%s'" % views.Quotes.objects.filter(name__contains=after_tra)[i - 1].name)
+            try:
+                update.message.reply_text(
+                    "--  '%s'" % views.Quotes.objects.filter(name__contains=after_tra)[i - 1].description)
+            except:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+        else:
+            i = random.choice(range(1, len(also)))
+            update.message.reply_text("العنوان  '%s'" % views.Quotes.objects.filter(name__contains=after_tra)[i - 1].name)
+            try:
+                update.message.reply_text(
+                    "--  '%s'" % views.Quotes.objects.filter(name__contains=after_tra)[i - 1].description)
+            except:
+                print("Oops!", sys.exc_info()[0], "occurred.")
+
+
 def error(update: Update, context: CallbackContext):
     """Log Errors caused by Updates."""
     sys.stderr.write("ERROR: '%s' caused by '%s'" % context.error, update)
     pass
 
 
+def handle(msg):
+
+    content_type, chat_type, chat_id = telepot.glance(msg)
+    print(content_type, chat_type, chat_id)
+    if content_type == 'text' and msg["text"].lower() == "news":
+        # let the human know that the pdf is on its way
+        bot.sendMessage(chat_id, "preparing pdf of fresh news, pls wait..")
+        # file="rgs_plan_ar_semester_2.pdf"
+        file="mainbot/Capture.png"
+
+        # send the pdf doc
+        bot.sendDocument(chat_id=chat_id, document=open(file, 'rb'))
+    elif content_type == 'text':
+        bot.sendMessage(chat_id, "sorry, I can only deliver news")
+
+
+# MessageLoop(bot, handle).run_as_thread()
+
+
 dispatcher.add_handler(CommandHandler("start", start))
 updater.dispatcher.add_handler(CommandHandler("start", start))
 updater.dispatcher.add_handler(CommandHandler("remove", remove))
-updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"إبحث عن كتاب"), echo)) # echo
-updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"@mzughbot /name"), name_book))
+updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"شعر"), porty))
+updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"إبحث عن كتاب"), echo))    # echo
+updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"@AlmarbadLib_bot /name"), name_book))
+# updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"/name"), name_book))
 # updater.dispatcher.add_handler(CommandHandler("name", name_book))
 # updater.dispatcher.add_handler(CommandHandler("y", multapil_cho))
 updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"كتب عشوائية"), randomBooks))
+updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"غذاء معرفي"), randomBooks))
+updater.dispatcher.add_handler(MessageHandler(Filters.regex(r"إقتباسات عشوائية"), quotes))
 updater.dispatcher.add_error_handler(error)  # error handling
 updater.dispatcher.add_handler(CallbackQueryHandler(button))  # handling inline buttons pressing
 

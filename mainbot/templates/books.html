@@ -17,9 +17,10 @@
     <li>{{ book.language }} اللغة </li>
     <li>عدد الصفحات {{ book.pages }}</li>
     <li> رابط تحميل الكتاب <a href="{{ book.download_link }}"> {{ book.name }} </a></li>
+    <img class="card-image mr-3" src="{{ Books.image }}" alt="Generic placeholder image">
     <li>{{ book.author }}:  اسم المؤلف : Author name :</li>
     <li>{{ book.image }} الصورة </li>
-    <br><br>
+    <br><br>    
     {% endfor %}
 
     {% endblock %}

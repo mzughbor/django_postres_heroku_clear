@@ -69,11 +69,31 @@ class Books(models.Model):
     language = models.CharField(max_length=20, choices=language_list)
     pages = models.IntegerField(blank=True)
     author = models.CharField(max_length=35)
-    download_link = models.TextField(null=False)
+    download_link = models.TextField(null=False, blank=False)
     image = models.ImageField(upload_to=filepath, null=True, blank=True)
     # add field for summaries / ملخصات كتب عشؤاية
     summaries = models.TextField(null=True)
 
     def __str__(self):
         return self.name
+
+
+class Quotes(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=False)
+    # field = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name + '  .. الاقتباس :  ' + self.description
+
+
+class Poetry(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=False)
+    # field = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name + '  .. شعر :  '
 

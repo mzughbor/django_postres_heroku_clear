@@ -26,13 +26,14 @@ number_counter = 0
 word_entered = ''
 i = 0
 
-updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
-#updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
+#updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
+updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
 from mainbot.models import Post, Books, Poetry, Quotes
 dispatcher: Dispatcher = updater.dispatcher
 
 
-bot = telepot.Bot('5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus')
+#bot = telepot.Bot('5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus')
+bot = telepot.Bot('5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ')
 
 
 def start(update: Update, context: CallbackContext, chatId=None):

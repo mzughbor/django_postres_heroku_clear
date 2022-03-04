@@ -15,8 +15,8 @@ def handle(msg):
     if content_type == 'text' and msg["text"].lower() == "news":
         # let the human know that the pdf is on its way
         bot.sendMessage(chat_id, "preparing pdf of fresh news, pls wait..")
-        # file="rgs_plan_ar_semester_2.pdf"
-        file="Capture.png"
+        file = "rgs_plan_ar_semester_2.pdf"
+        # file="Capture.png"
 
         # send the pdf doc
         bot.sendDocument(chat_id=chat_id, document=open(file, 'rb'))

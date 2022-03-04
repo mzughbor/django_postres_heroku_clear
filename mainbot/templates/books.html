@@ -9,7 +9,11 @@
 <body>
     <h1>all Books</h1>
 
+
+    <form acton="" method="post" enctype="multipart/form-data">
+
     {% for book in all_books %}
+
     <br>
     <li> اسم الكتاب : {{ book.name }}</li>
     <li> وصف الكتاب : {{ book.description }}</li>
@@ -17,12 +21,16 @@
     <li>{{ book.language }} اللغة </li>
     <li>عدد الصفحات {{ book.pages }}</li>
     <li> رابط تحميل الكتاب <a href="{{ book.download_link }}"> {{ book.name }} </a></li>
-    <img class="card-image mr-3" src="{{ Books.image }}" alt="Generic placeholder image">
+        {% if book.image %}
+            <li>{{ book.image.url }}</li>
+            <img class="card-image mr-3" src="{{ book.image.url }}" alt="Generic placeholder image">
+
+        {% endif %}
     <li>{{ book.author }}:  اسم المؤلف : Author name :</li>
-    <li>{{ book.image }} الصورة </li>
-    <br><br>    
+        <br><br>
     {% endfor %}
 
     {% endblock %}
+    </form>
 </body>
 </html>

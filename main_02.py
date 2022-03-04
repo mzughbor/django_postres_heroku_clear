@@ -7,6 +7,7 @@ import telepot
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from telepot.loop import MessageLoop
 
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "telegramBot.settings")
 import django
 import telegram
@@ -19,13 +20,14 @@ from telegram.replykeyboardmarkup import ReplyKeyboardMarkup
 from telegram.replykeyboardremove import ReplyKeyboardRemove
 from telegram.bot import Bot
 
+from mainbot.views import books_list_mz
 
 number_counter = 0
 word_entered = ''
 i = 0
 
 updater = Updater("5275565416:AAHLyoqmbpLiUtniz2BnBXKMP_v80aBXGus", use_context=True)
-# updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
+#updater = Updater("5135627916:AAHN1isdHyJR9VpeuVvCIbGQInrCtoeA-WQ", use_context=True)
 from mainbot.models import Post, Books, Poetry, Quotes
 dispatcher: Dispatcher = updater.dispatcher
 
@@ -91,7 +93,7 @@ def name_book(update: Update, context: CallbackContext):
             update.message.reply_text("نتيجه البحث هي :'%s' " % x)
             keyboard[0].append(InlineKeyboardButton(x, callback_data=counter, switch_inline_query='/name'))
 
-        print(i, "i'm the i ")
+        # print(i, "i'm the i ")
         if len(also) >= 2:
             reply_markup = InlineKeyboardMarkup(keyboard)
             update.message.reply_text('Please choose:', reply_markup=reply_markup)
@@ -184,7 +186,7 @@ def randomBooks(update: Update, context: CallbackContext):
         # if len(also) == 0:
         after_tra = str(random.choice(char_list))
         also = [e.name for e in Books.objects.filter(name__contains=after_tra)]
-    print(len(also))
+    #print(len(also))
     if str(update.message.text) == "غذاء معرفي":
         update.message.reply_text("الان سأظهر لك كتاب واحد من المكتبة, استمتع بالقراءة ... ")
         if len(also) == 1:
@@ -243,29 +245,42 @@ def randomBooks(update: Update, context: CallbackContext):
             # file="rgs_plan_ar_semester_2.pdf"
             # file = "mainbot/Capture.png"
             # media\media
-            file = views.Books.objects.filter()[0].image
-            file = "media/" + str(file)
-            update.message.reply_text("image '%s'" % file)
-            # send the pdf doc
-            bot.sendDocument(chat_id=update.message.chat.id, document=open(file, 'rb'))
-            # bot.sendMessage(chat_id, "sorry, I can only deliver news")
+            # file = views.Books.objects.filter()[i-1].image #.url
+            for book in books_list_mz:
+                if str(book.name) == views.Books.objects.filter(name__contains=after_tra)[i - 1]:
+                    file = book.image
+                    #specifications_file = book.spec
+                    print("I'm the file :", file)
+                    file = "media/" + str(file)
+                    #specifications_file = "media/" + str(specifications_file)
+                    # update.message.reply_text("image '%s'" % file)
+                    # send the pdf doc
+                    bot.sendDocument(chat_id=update.message.chat.id, document=open(file, 'rb'))
+                    #bot.sendDocument(chat_id=update.message.chat.id, document=open(specifications_file, 'rb'))
+                    # bot.sendMessage(chat_id, "sorry, I can only deliver news")
 
         else:
             i = random.choice(range(1, len(also)))
-
             # let the human know that the pdf is on its way
             bot.sendMessage(update.message.chat.id, "preparing pdf of fresh news, pls wait..")
-            # file="rgs_plan_ar_semester_2.pdf"
-            # file = "mainbot/Capture.png"
-            # media\media
-            file = views.Books.objects.filter()[0].image
-            file = "media\\" + str(file)
-            update.message.reply_text("image '%s'" % file)
-            # send the pdf doc
-            bot.sendDocument(chat_id=update.message.chat.id, document=open(file, 'rb'))
-            # bot.sendMessage(chat_id, "sorry, I can only deliver news")
+            for book in books_list_mz:
+                if str(book.name) == str(views.Books.objects.filter(name__contains=after_tra)[i - 1]):
+                    file = book.image
+                    print("I'm the file :", file)
+                    # file="rgs_plan_ar_semester_2.pdf"
+                    # file = "mainbot/Capture.png"
+                    # media\media
+                    # file = views.Books.objects.filter()[i-1].image #.url
+                    file = "media/" + str(file)
+                    #specifications_file = book.spec
+                    #specifications_file = "media/" + str(specifications_file)
+                    # update.message.reply_text("image '%s'" % file)
+                    # send the pdf doc
+                    bot.sendDocument(chat_id=update.message.chat.id, document=open(file, 'rb'))
+                    #bot.sendDocument(chat_id=update.message.chat.id, document=open(specifications_file, 'rb'))
+                    # bot.sendMessage(chat_id, "sorry, I can only deliver news")
+                    # print("this  my i:", i)
 
-            # print("this  my i:", i)
             update.message.reply_text("اسم الكتاب : ... '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1])
             update.message.reply_text("المؤلف  '%s'" % views.Books.objects.filter(name__contains=after_tra)[i - 1].author)
             try:
@@ -291,7 +306,7 @@ def porty(update: Update, context: CallbackContext):
     while len(also) == 0:
         after_tra = str(random.choice(char_list))
         also = [e.name for e in Poetry.objects.filter(name__contains=after_tra)]
-    print(len(also))
+    # print(len(also))
 
     if str(update.message.text) == "شعر":
         update.message.reply_text("سأقوم بعرض بعض من أبيات الشعر من المكتبة بشكل عشوائي : ")
@@ -323,7 +338,7 @@ def quotes(update: Update, context: CallbackContext):
     while len(also) == 0:
         after_tra = str(random.choice(char_list))
         also = [e.name for e in Quotes.objects.filter(name__contains=after_tra)]
-    print(len(also))
+    # print(len(also))
 
     if str(update.message.text) == "إقتباسات عشوائية":
         update.message.reply_text("سأقوم بعرض بعض من إقتباسات من المكتبة بشكل عشوائي : ")

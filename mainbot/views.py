@@ -5,7 +5,7 @@ from .models import Comment, Post, Books, Quotes, Poetry
 from .forms import CommentForm
 
 messages_list_mz = Post.objects.all()
-#books_list_mz = Books.objects.all()
+books_list_mz = Books.objects.all()
 #j = []
 names_list = ['name', 'description', 'field', 'language', 'pages', 'author',
               'download_link', 'download', 'image'

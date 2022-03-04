@@ -91,7 +91,7 @@ class Quotes(models.Model):
 
 
 class Poetry(models.Model):
-    id = models.AutoField(default=1, primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=False)
     # field = models.CharField(max_length=50)

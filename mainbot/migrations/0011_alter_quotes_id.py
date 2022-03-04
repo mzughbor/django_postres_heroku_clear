@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='quotes',
             name='id',
-            field=models.AutoField(primary_key=True, serialize=False),
+            field=models.AutoField(default = 1, primary_key=True, serialize=False),
         ),
     ]

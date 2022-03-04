@@ -6,9 +6,9 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainbot', '0007_poetry_quotes'),
+        ('mainbot', '0009_remove_poetry_poetry_id_remove_quotes_quote_id_and_more'),
     ]
-#        ('mainbot', '0009_remove_poetry_poetry_id_remove_quotes_quote_id_and_more'),
+    # ('mainbot', '0007_poetry_quotes'),
 
     operations = [
         migrations.AlterField(

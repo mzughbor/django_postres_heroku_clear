@@ -74,7 +74,7 @@ class Books(models.Model):
     image = models.FileField(upload_to="images/", null=True, blank=True)#filepath
     # add field for summaries / ملخصات كتب عشؤاية
     summaries = models.TextField(null=True)
-    #any_file = models.FileField(upload_to="router_specifications", null=True, blank=True)
+    any_file = models.FileField(upload_to="router_specifications", null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -91,7 +91,7 @@ class Quotes(models.Model):
 
 
 class Poetry(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(default=1, primary_key=True)
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=False)
     # field = models.CharField(max_length=50)
@@ -99,8 +99,3 @@ class Poetry(models.Model):
     def __str__(self):
         return self.name + '  .. شعر :  '
 
-
-class Users(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    data = models.TextField(null=True, blank=False)
